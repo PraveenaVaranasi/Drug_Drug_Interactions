@@ -1,0 +1,364 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Drug Search - Drug Detection System</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/drugs.css') }}">
+</head>
+<body>
+    <div class="container">
+        <!-- Header -->
+        <header class="header">
+            <div class="header-content">
+                <div class="logo">
+                    <div class="logo-icon">🧪</div>
+                    <h1>Drug Detection System</h1>
+                </div>
+                <nav class="nav-menu">
+                    <a href="/" class="nav-link">
+                        <span class="nav-icon">🏠</span>
+                        <span class="nav-text">Home</span>
+                    </a>
+                    <a href="/about" class="nav-link">
+                        <span class="nav-icon">ℹ️</span>
+                        <span class="nav-text">About</span>
+                    </a>
+                    <a href="/analysis" class="nav-link">
+                        <span class="nav-icon">📊</span>
+                        <span class="nav-text">Analysis</span>
+                    </a>
+                    <a href="/drugs" class="nav-link active">
+                        <span class="nav-icon">💊</span>
+                        <span class="nav-text">Drugs</span>
+                    </a>
+                    <a href="/login" class="nav-link nav-logout" onclick="logoutFunc(); return false;">
+                        <span class="nav-icon">🚪</span>
+                        <span class="nav-text">Logout</span>
+                    </a>
+                    <button id="darkModeToggle" class="nav-link" style="border: none; background: none; cursor: pointer; padding: 0.75rem 1.25rem;" title="Toggle Dark Mode">🌙</button>
+                </nav>
+                <div class="header-status">
+                    <div id="statusIndicator" class="status-dot"></div>
+                    <span id="statusText">Active</span>
+                </div>
+            </div>
+        </header>
+
+        <!-- Main Content -->
+        <main class="drugs-main">
+            <!-- Hero Section -->
+            <section class="drugs-hero">
+                <div class="hero-content">
+                    <h1>Drug Database Search</h1>
+                    <p>Search and explore drug information from our comprehensive database</p>
+                </div>
+            </section>
+
+            <!-- Search Section -->
+            <section class="search-section">
+                <div class="search-container">
+                    <div class="search-box-wrapper">
+                        <div class="search-box">
+                            <input 
+                                type="text" 
+                                id="drugSearchInput" 
+                                class="search-input" 
+                                placeholder="Search drug by name (e.g., Aspirin, Ibuprofen)..."
+                                autocomplete="off"
+                            >
+                            <span class="search-icon">🔍</span>
+                        </div>
+                        <div id="searchSuggestions" class="search-suggestions hidden">
+                            <div class="loading-spinner">
+                                <div class="spinner"></div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="search-filters">
+                        <button class="filter-btn active" data-filter="all">All Drugs</button>
+                        <button class="filter-btn" data-filter="common">Common</button>
+                        <button class="filter-btn" data-filter="prescription">Prescription</button>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Results Section -->
+            <section class="results-section">
+                <div class="results-container">
+                    <div id="resultsContent" class="results-content">
+                        <div class="empty-state">
+                            <div class="empty-icon">💊</div>
+                            <h3>Start Searching</h3>
+                            <p>Enter a drug name to search our database</p>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Info Section -->
+            <section class="drugs-info">
+                <div class="info-container">
+                    <h2>Drug Database Information</h2>
+                    <div class="info-grid">
+                        <div class="info-card">
+                            <h4>🔬 Molecular Fingerprints</h4>
+                            <p>Each drug is represented as a 2048-dimensional fingerprint vector capturing its chemical structure and properties.</p>
+                        </div>
+                        <div class="info-card">
+                            <h4>🧬 SMILES Notation</h4>
+                            <p>Simplified Molecular Input Line Entry Specification (SMILES) is used to represent molecular structures in a standardized format.</p>
+                        </div>
+                        <div class="info-card">
+                            <h4>💾 Database Coverage</h4>
+                            <p>Our database includes common, prescription, and specialized drugs with comprehensive fingerprint and molecular data.</p>
+                        </div>
+                        <div class="info-card">
+                            <h4>⚙️ Search Features</h4>
+                            <p>Real-time search with instant suggestions, filter by drug type, and detailed drug information including fingerprints.</p>
+                        </div>
+                    </div>
+                </div>
+            </section>
+        </main>
+    </div>
+
+    <!-- Drug Detail Modal -->
+    <div id="drugModal" class="modal hidden">
+        <div class="modal-content">
+            <button class="modal-close" onclick="closeDrugModal()">&times;</button>
+            <div id="modalBody" class="modal-body">
+                <!-- Drug details will be loaded here -->
+            </div>
+        </div>
+    </div>
+
+    <!-- Scripts -->
+    <script src="{{ url_for('static', filename='js/darkmode.js') }}"></script>
+    <script>
+        const searchInput = document.getElementById('drugSearchInput');
+        const suggestions = document.getElementById('searchSuggestions');
+        const resultsContent = document.getElementById('resultsContent');
+        const filterButtons = document.querySelectorAll('.filter-btn');
+        
+        let currentFilter = 'all';
+        let searchTimeout;
+
+        // Logout function
+        function logoutFunc() {
+            fetch('/api/auth/logout', { method: 'POST' })
+                .then(response => response.json())
+                .then(data => {
+                    window.location.href = '/login';
+                })
+                .catch(error => console.error('Logout error:', error));
+        }
+
+        // Search input event listener
+        searchInput.addEventListener('input', function(e) {
+            clearTimeout(searchTimeout);
+            const query = e.target.value.trim();
+
+            if (query.length < 2) {
+                suggestions.classList.add('hidden');
+                return;
+            }
+
+            suggestions.classList.remove('hidden');
+            suggestions.innerHTML = '<div class="loading-spinner"><div class="spinner"></div></div>';
+
+            searchTimeout = setTimeout(() => {
+                searchDrugs(query);
+            }, 300);
+        });
+
+        // Filter buttons
+        filterButtons.forEach(btn => {
+            btn.addEventListener('click', function() {
+                filterButtons.forEach(b => b.classList.remove('active'));
+                this.classList.add('active');
+                currentFilter = this.dataset.filter;
+                
+                const query = searchInput.value.trim();
+                if (query.length >= 2) {
+                    searchDrugs(query);
+                }
+            });
+        });
+
+        function searchDrugs(query) {
+            fetch(`/api/drugs/search?q=${encodeURIComponent(query)}&filter=${currentFilter}`)
+                .then(response => response.json())
+                .then(data => {
+                    if (data.success) {
+                        displaySuggestions(data.suggestions);
+                        if (data.suggestions.length > 0) {
+                            displayResults(data.suggestions);
+                        } else {
+                            resultsContent.innerHTML = `
+                                <div class="empty-state">
+                                    <div class="empty-icon">🔍</div>
+                                    <h3>No Results Found</h3>
+                                    <p>Try searching with a different term</p>
+                                </div>
+                            `;
+                        }
+                    }
+                })
+                .catch(error => {
+                    console.error('Search error:', error);
+                    suggestions.innerHTML = '<div class="error-message">Error searching drugs</div>';
+                });
+        }
+
+        function displaySuggestions(drugs) {
+            if (drugs.length === 0) {
+                suggestions.classList.add('hidden');
+                return;
+            }
+
+            const html = drugs.slice(0, 8).map(drug => `
+                <div class="suggestion-item" onclick="selectDrug('${drug.name}')">
+                    <span class="suggestion-name">${drug.name}</span>
+                    <span class="suggestion-type">${drug.type || 'Drug'}</span>
+                </div>
+            `).join('');
+
+            suggestions.innerHTML = html;
+        }
+
+        function displayResults(drugs) {
+            const resultsHtml = drugs.map(drug => `
+                <div class="drug-card">
+                    <div class="drug-header">
+                        <h3>${drug.name}</h3>
+                        <span class="drug-type">${drug.type || 'Drug'}</span>
+                    </div>
+                    <div class="drug-info">
+                        <div class="info-item">
+                            <span class="info-label">Fingerprint:</span>
+                            <span class="info-value">2048 features</span>
+                        </div>
+                        <div class="info-item">
+                            <span class="info-label">SMILES:</span>
+                            <span class="info-value">Available</span>
+                        </div>
+                        ${drug.features ? `
+                            <div class="info-item">
+                                <span class="info-label">Active Features:</span>
+                                <span class="info-value">${drug.features}</span>
+                            </div>
+                        ` : ''}
+                    </div>
+                    <div class="fingerprint-preview">
+                        <h5>Fingerprint Preview</h5>
+                        <div class="fingerprint-grid">
+                            ${(drug.fingerprint || []).slice(0, 20).map((val, i) => `
+                                <div class="fingerprint-cell" style="opacity: ${Math.min(val, 1)}" title="Features ${i}: ${val.toFixed(4)}"></div>
+                            `).join('')}
+                        </div>
+                    </div>
+                    <button class="btn-view-details" onclick="showDrugDetails('${drug.name}')">View Details</button>
+                </div>
+            `).join('');
+
+            resultsContent.innerHTML = `<div class="results-grid">${resultsHtml}</div>`;
+        }
+
+        function selectDrug(drugName) {
+            searchInput.value = drugName;
+            suggestions.classList.add('hidden');
+            searchDrugs(drugName);
+        }
+
+        function showDrugDetails(drugName) {
+            fetch(`/api/drugs/details?name=${encodeURIComponent(drugName)}`)
+                .then(response => response.json())
+                .then(data => {
+                    if (data.success) {
+                        displayDrugModal(data.drug);
+                    }
+                })
+                .catch(error => console.error('Error fetching details:', error));
+        }
+
+        function displayDrugModal(drug) {
+            const modalBody = document.getElementById('modalBody');
+            const activeFeatures = drug.fingerprint.filter(v => v > 0).length;
+            
+            modalBody.innerHTML = `
+                <div class="modal-header">
+                    <h2>${drug.name}</h2>
+                    <span class="drug-type-badge">${drug.type || 'Drug'}</span>
+                </div>
+                <div class="modal-section">
+                    <h4>Basic Information</h4>
+                    <div class="info-grid-detailed">
+                        <div class="info-item-detailed">
+                            <span class="label">Drug Name:</span>
+                            <span class="value">${drug.name}</span>
+                        </div>
+                        <div class="info-item-detailed">
+                            <span class="label">Fingerprint Size:</span>
+                            <span class="value">2048 features</span>
+                        </div>
+                        <div class="info-item-detailed">
+                            <span class="label">Active Features:</span>
+                            <span class="value">${activeFeatures}</span>
+                        </div>
+                        <div class="info-item-detailed">
+                            <span class="label">Feature Density:</span>
+                            <span class="value">${((activeFeatures / 2048) * 100).toFixed(2)}%</span>
+                        </div>
+                    </div>
+                </div>
+                ${drug.smiles ? `
+                    <div class="modal-section">
+                        <h4>SMILES Notation</h4>
+                        <div class="smiles-box">
+                            <code>${drug.smiles}</code>
+                            <button class="btn-copy" onclick="copySMILES('${drug.smiles}')">Copy</button>
+                        </div>
+                    </div>
+                ` : ''}
+                <div class="modal-section">
+                    <h4>Fingerprint Visualization</h4>
+                    <div class="fingerprint-viz">
+                        ${drug.fingerprint.slice(0, 50).map((val, i) => `
+                            <div class="fp-bar" style="height: ${Math.min(val * 100, 100)}%;" title="Feature ${i}: ${val.toFixed(4)}"></div>
+                        `).join('')}
+                    </div>
+                    <p class="fingerprint-note">Showing first 50 features of 2048</p>
+                </div>
+            `;
+            
+            document.getElementById('drugModal').classList.remove('hidden');
+        }
+
+        function closeDrugModal() {
+            document.getElementById('drugModal').classList.add('hidden');
+        }
+
+        function copySMILES(smiles) {
+            navigator.clipboard.writeText(smiles).then(() => {
+                alert('SMILES copied to clipboard!');
+            });
+        }
+
+        // Close modal on background click
+        document.getElementById('drugModal').addEventListener('click', function(e) {
+            if (e.target === this) {
+                closeDrugModal();
+            }
+        });
+
+        // Close suggestions when clicking outside
+        document.addEventListener('click', function(e) {
+            if (!e.target.closest('.search-box-wrapper')) {
+                suggestions.classList.add('hidden');
+            }
+        });
+    </script>
+</body>
+</html>

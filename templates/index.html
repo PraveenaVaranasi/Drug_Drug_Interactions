@@ -1,0 +1,214 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">
+    <meta http-equiv="Pragma" content="no-cache">
+    <meta http-equiv="Expires" content="0">
+    <title>Drug Detection - Matrix Input</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+</head>
+<body>
+    <div class="container">
+        <!-- Header -->
+        <header class="header">
+            <div class="header-content">
+                <div class="logo">
+                    <div class="logo-icon">🧪</div>
+                    <h1>Drug Detection System</h1>
+                </div>
+                <nav class="nav-menu">
+                    <a href="/" class="nav-link active">
+                        <span class="nav-icon">🏠</span>
+                        <span class="nav-text">Home</span>
+                    </a>
+                    <a href="/about" class="nav-link">
+                        <span class="nav-icon">ℹ️</span>
+                        <span class="nav-text">About</span>
+                    </a>
+                    <a href="/analysis" class="nav-link">
+                        <span class="nav-icon">📊</span>
+                        <span class="nav-text">Analysis</span>
+                    </a>
+                    <a href="/drugs" class="nav-link">
+                        <span class="nav-icon">💊</span>
+                        <span class="nav-text">Drugs</span>
+                    </a>
+                    <a href="/login" class="nav-link nav-logout" onclick="logoutFunc(); return false;">
+                        <span class="nav-icon">🚪</span>
+                        <span class="nav-text">Logout</span>
+                    </a>
+                    <button id="darkModeToggle" class="nav-link" style="border: none; background: none; cursor: pointer; padding: 0.75rem 1.25rem;" title="Toggle Dark Mode">🌙</button>
+                </nav>
+                <div class="header-status">
+                    <div id="statusIndicator" class="status-dot"></div>
+                    <span id="statusText">Connecting...</span>
+                </div>
+            </div>
+        </header>
+
+        <!-- Main Content -->
+        <main class="main-content">
+            <div class="content-wrapper">
+                <!-- Left Panel - Input -->
+                <section class="upload-panel">
+                    <div class="panel-header">
+                        <h2>Input Data</h2>
+                        <p class="subtitle">Enter drug pair molecular fingerprints (2048-dim vectors for each drug)</p>
+                    </div>
+
+                    <!-- Data Input Tabs -->
+                    <div class="input-tabs">
+                        <button class="tab-btn active" onclick="switchTab('manual')">
+                            📝 Manual Input
+                        </button>
+                        <button class="tab-btn" onclick="switchTab('csv')">
+                            📊 CSV Upload
+                        </button>
+                        <button class="tab-btn" onclick="switchTab('sample')">
+                            📌 Sample Data
+                        </button>
+                    </div>
+
+                    <!-- Manual Input Tab -->
+                    <div id="manual-tab" class="tab-content active">
+                        <div class="input-section">
+                            <label>Drug Pair Vector Input</label>
+                            <textarea id="matrixInput" class="matrix-input" placeholder="Paste space-separated values from two 2048-dimensional molecular fingerprint vectors concatenated together (4096 total) or pre-trimmed (2097)">
+                            </textarea>
+                            <p class="input-hint">
+                                ✓ Format: Single row of 4096 space-separated floating-point numbers<br>
+                                ✓ Each drug: 2048 dimensional molecular fingerprint<br>
+                                ✓ Expected output: 0 (Safe) or 1 (Harmful drug-drug interaction)<br>
+                                Example: 0.0 0.0 ... 0.1855 ... 0.2441 ... (4096 values total)
+                            </p>
+                        </div>
+                    </div>
+
+                    <!-- CSV Upload Tab -->
+                    <div id="csv-tab" class="tab-content">
+                        <div id="csvUploadZone" class="upload-zone">
+                            <div class="upload-icon">📁</div>
+                            <p class="upload-text">Drag CSV file here</p>
+                            <p class="upload-subtext">or</p>
+                            <button class="btn-browse" onclick="document.getElementById('csvFile').click()">
+                                Browse Files
+                            </button>
+                            <input type="file" id="csvFile" accept=".csv" style="display: none;">
+                            <p class="file-hint">CSV format: One sample per row, values space/comma separated</p>
+                        </div>
+                        <div id="csvPreview" class="preview-section hidden">
+                            <h4>CSV Preview</h4>
+                            <div id="csvContent" class="csv-content"></div>
+                            <button class="btn-remove" onclick="clearCSV()">✕ Clear</button>
+                        </div>
+                    </div>
+
+                    <!-- Sample Data Tab -->
+                    <div id="sample-tab" class="tab-content">
+                        <div class="sample-data-list">
+                            <p class="subtitle">Use pre-generated sample data for testing</p>
+                            <button class="btn-secondary" onclick="loadSampleData('random')">
+                                🎲 Random Sample
+                            </button>
+                            <button class="btn-secondary" onclick="loadSampleData('batch')">
+                                📦 Batch (5 samples)
+                            </button>
+                            <button class="btn-secondary" onclick="loadSampleData('normalized')">
+                                ⚖️ Normalized Sample
+                            </button>
+                        </div>
+                    </div>
+
+                    <!-- Predict Button -->
+                    <div class="predict-section">
+                        <button id="predictBtn" class="btn-primary" onclick="predict()">
+                            Analyze Data
+                        </button>
+                        <p id="uploadStatus" class="status-message"></p>
+                    </div>
+                </section>
+
+                <!-- Right Panel - Results -->
+                <section class="results-panel">
+                    <!-- Results -->
+                    <div id="resultsSection" class="results-section hidden">
+                        <div class="result-card">
+                            <h3>Detection Result</h3>
+                            
+                            <!-- Drug Detection Result -->
+                            <div class="detection-result">
+                                <div class="result-status" id="resultStatus">
+                                    <div class="status-icon">❓</div>
+                                    <div class="status-text">
+                                        <h4 id="detectionClass">Unknown</h4>
+                                        <p id="detectionConfidence">Confidence: 0%</p>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- Confidence Bar -->
+                            <div class="confidence-container">
+                                <div class="confidence-label-full">Detection Confidence</div>
+                                <div class="progress-bar">
+                                    <div id="progressFill" class="progress-fill" style="width: 0%"></div>
+                                </div>
+                            </div>
+
+                            <!-- Probability Distribution -->
+                            <div class="probability-section">
+                                <h4>Classification Probabilities</h4>
+                                <div id="probabilityChart" class="probability-chart"></div>
+                            </div>
+
+                            <!-- Batch Results (if applicable) -->
+                            <div id="batchResultsSection" class="batch-results hidden">
+                                <h4>Batch Results</h4>
+                                <div id="batchResultsTable" class="results-table"></div>
+                            </div>
+
+                            <!-- Details -->
+                            <div class="details-section">
+                                <button class="btn-secondary" onclick="toggleDetails()">
+                                    📊 View Details
+                                </button>
+                                <div id="detailsContent" class="details-content hidden">
+                                    <pre id="detailsJson"></pre>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Loading Spinner -->
+                    <div id="loadingSpinner" class="loading-spinner hidden">
+                        <div class="spinner"></div>
+                        <p>Analyzing data...</p>
+                    </div>
+
+                    <!-- Model Info -->
+                    <div class="info-section">
+                        <h4>Model Information</h4>
+                        <div id="modelInfo" class="info-content">
+                            <p><strong>Task:</strong> Drug-Drug Interaction Detection</p>
+                            <p><strong>Input Features:</strong> 2048 values per drug (2 drugs = 4096 dimensional)</p>
+                            <p><strong>Output Classes:</strong> 0 = Safe / 1 = Harmful</p>
+                            <p><strong>Input Format:</strong> Molecular fingerprint vectors from drug pairs</p>
+                            <p><strong>Model Type:</strong> PyTorch Binary Classifier</p>
+                        </div>
+                    </div>
+                </section>
+            </div>
+        </main>
+
+        <!-- Footer -->
+        <footer class="footer">
+            <p>&copy; 2024 Drug Detection System | Powered by Flask & PyTorch</p>
+        </footer>
+    </div>
+
+    <script src="{{ url_for('static', filename='js/darkmode.js') }}"></script>
+    <script src="{{ url_for('static', filename='js/script.js') }}"></script>
+</body>
+</html>
+

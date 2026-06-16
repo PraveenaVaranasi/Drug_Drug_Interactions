@@ -1,0 +1,264 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>About - Drug Detection System</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/about.css') }}">
+</head>
+<body>
+    <div class="container">
+        <!-- Header -->
+        <header class="header">
+            <div class="header-content">
+                <div class="logo">
+                    <div class="logo-icon">🧪</div>
+                    <h1>Drug Detection System</h1>
+                </div>
+                <nav class="nav-menu">
+                    <a href="/" class="nav-link">
+                        <span class="nav-icon">🏠</span>
+                        <span class="nav-text">Home</span>
+                    </a>
+                    <a href="/about" class="nav-link active">
+                        <span class="nav-icon">ℹ️</span>
+                        <span class="nav-text">About</span>
+                    </a>
+                    <a href="/analysis" class="nav-link">
+                        <span class="nav-icon">📊</span>
+                        <span class="nav-text">Analysis</span>
+                    </a>
+                    <a href="/drugs" class="nav-link">
+                        <span class="nav-icon">💊</span>
+                        <span class="nav-text">Drugs</span>
+                    </a>
+                    <button id="darkModeToggle" class="nav-link" style="border: none; background: none; cursor: pointer; padding: 0.75rem 1.25rem;" title="Toggle Dark Mode">🌙</button>
+                </nav>
+                <div class="header-status">
+                    <div class="status-dot online"></div>
+                    <span id="statusText">Active</span>
+                </div>
+            </div>
+        </header>
+
+        <!-- Main Content -->
+        <main class="about-main">
+            <!-- Hero Section -->
+            <section class="about-hero">
+                <div class="hero-content">
+                    <h1>About Drug Detection System</h1>
+                    <p>Advanced AI-powered detection from spectroscopic and chemical analysis data</p>
+                </div>
+            </section>
+
+            <!-- Content Sections -->
+            <section class="about-section">
+                <div class="about-grid">
+                    <!-- Mission -->
+                    <div class="about-card">
+                        <div class="card-icon">🎯</div>
+                        <h3>Our Mission</h3>
+                        <p>To provide a reliable, fast, and accurate platform for drug detection using advanced machine learning on spectroscopic data.</p>
+                    </div>
+
+                    <!-- Technology -->
+                    <div class="about-card">
+                        <div class="card-icon">⚙️</div>
+                        <h3>Technology Stack</h3>
+                        <p>Built with Python, Flask, PyTorch, and modern web technologies. Designed for analyzing numerical matrix data with high precision.</p>
+                    </div>
+
+                    <!-- Features -->
+                    <div class="about-card">
+                        <div class="card-icon">✨</div>
+                        <h3>Key Features</h3>
+                        <p>Easy matrix input, batch processing, real-time predictions, CSV support, probability visualization, and comprehensive analysis.</p>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Detailed Info -->
+            <section class="about-detailed">
+                <div class="about-content">
+                    <h2>How It Works</h2>
+                    <div class="steps">
+                        <div class="step">
+                            <div class="step-number">1</div>
+                            <h4>Input Data</h4>
+                            <p>Enter numerical data (2097 features) from spectroscopy or upload CSV files for batch analysis.</p>
+                        </div>
+                        <div class="step">
+                            <div class="step-number">2</div>
+                            <h4>Process</h4>
+                            <p>Data is normalized and passed through our trained deep neural network model.</p>
+                        </div>
+                        <div class="step">
+                            <div class="step-number">3</div>
+                            <h4>Get Results</h4>
+                            <p>Receive detection predictions with confidence scores and detailed probability distribution for each sample.</p>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Tech Details -->
+            <section class="tech-details">
+                <h2>Model Specifications</h2>
+                <div class="tech-grid">
+                    <div class="tech-item">
+                        <h4>Model Architecture</h4>
+                        <ul>
+                            <li>Deep Neural Network</li>
+                            <li>5-Layer Fully Connected</li>
+                            <li>Batch Normalization</li>
+                            <li>3.1M+ Parameters</li>
+                        </ul>
+                    </div>
+                    <div class="tech-item">
+                        <h4>Input & Output</h4>
+                        <ul>
+                            <li>Input: 4096 Features</li>
+                            <li>Output: Binary Classification</li>
+                            <li>Classes: Drug / No Drug</li>
+                            <li>Confidence Score</li>
+                        </ul>
+                    </div>
+                    <div class="tech-item">
+                        <h4>Technology Stack</h4>
+                        <ul>
+                            <li>Flask 3.0.0</li>
+                            <li>PyTorch 2.9.1</li>
+                            <li>Python 3.13</li>
+                        </ul>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Capabilities Section -->
+            <section class="capabilities-section">
+                <h2>System Capabilities</h2>
+                <div class="capabilities-grid">
+                    <div class="capability-item">
+                        <h4>📊 Batch Processing</h4>
+                        <p>Process multiple samples simultaneously using CSV files for efficient analysis.</p>
+                    </div>
+                    <div class="capability-item">
+                        <h4>🔬 Spectroscopic Analysis</h4>
+                        <p>Analyze chemical and spectroscopic data with high precision detection.</p>
+                    </div>
+                    <div class="capability-item">
+                        <h4>⚡ Real-time Predictions</h4>
+                        <p>Get instant results with GPU/CPU acceleration support.</p>
+                    </div>
+                    <div class="capability-item">
+                        <h4>📈 Probability Insights</h4>
+                        <p>View detailed confidence scores and probability distributions for informed decisions.</p>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Team Section -->
+            <section class="team-section">
+                <h2>Built By</h2>
+                <p>A dedicated team of AI researchers, chemists, and software engineers committed to advancing drug detection technology.</p>
+                <div class="team-grid">
+                    <div class="team-member">
+                        <div class="member-avatar">👨‍💻</div>
+                        <h4>Development Team</h4>
+                        <p>Building robust detection systems</p>
+                    </div>
+                    <div class="team-member">
+                        <div class="member-avatar">👩‍🔬</div>
+                        <h4>ML & Chemistry Experts</h4>
+                        <p>Training precision models</p>
+                    </div>
+                    <div class="team-member">
+                        <div class="member-avatar">🎨</div>
+                        <h4>Design Team</h4>
+                        <p>Creating intuitive interfaces</p>
+                    </div>
+                </div>
+            </section>
+
+            <!-- CTA Section -->
+            <section class="cta-section">
+                <h2>Ready to Get Started?</h2>
+                <p>Begin analyzing your spectroscopic data with advanced AI detection</p>
+                <div class="cta-buttons">
+                    <a href="/register" class="btn-primary">Create Account</a>
+                    <a href="/" class="btn-secondary">Try Demo</a>
+                </div>
+            </section>
+
+            <!-- FAQ Section -->
+            <section class="faq-section">
+                <h2>Frequently Asked Questions</h2>
+                <div class="faq-items">
+                    <div class="faq-item">
+                        <h4>What data format should I use?</h4>
+                        <p>Input 2097 numerical features from spectroscopic analysis. Supports CSV files, manual text input, or API integration.</p>
+                    </div>
+                    <div class="faq-item">
+                        <h4>How accurate is the detection model?</h4>
+                        <p>The model is trained on extensive spectroscopic datasets with high precision. Accuracy depends on data quality and preprocessing.</p>
+                    </div>
+                    <div class="faq-item">
+                        <h4>Can I process multiple samples at once?</h4>
+                        <p>Yes! Upload a CSV file with multiple rows, and the system will process and display results for all samples.</p>
+                    </div>
+                    <div class="faq-item">
+                        <h4>Is my data confidential?</h4>
+                        <p>Yes, all data is processed securely with REST API standards and is not retained without explicit consent.</p>
+                    </div>
+                    <div class="faq-item">
+                        <h4>What does the confidence score mean?</h4>
+                        <p>It represents the model's certainty in its prediction (0-100%). Higher scores indicate stronger detection confidence.</p>
+                    </div>
+                    <div class="faq-item">
+                        <h4>Can I use this for research?</h4>
+                        <p>Yes, the system is designed for research, testing, and practical applications. Please review our license for details.</p>
+                    </div>
+                </div>
+            </section>
+        </main>
+
+        <!-- Footer -->
+        <footer class="footer">
+            <div class="footer-content">
+                <div class="footer-section">
+                    <h4>Drug Detection System</h4>
+                    <ul>
+                        <li><a href="/about">About</a></li>
+                        <li><a href="#">Documentation</a></li>
+                        <li><a href="#">Contact</a></li>
+                    </ul>
+                </div>
+                <div class="footer-section">
+                    <h4>Resources</h4>
+                    <ul>
+                        <li><a href="#">API Docs</a></li>
+                        <li><a href="#">Tutorials</a></li>
+                        <li><a href="#">Blog</a></li>
+                    </ul>
+                </div>
+                <div class="footer-section">
+                    <h4>Legal</h4>
+                    <ul>
+                        <li><a href="#">Privacy</a></li>
+                        <li><a href="#">Terms</a></li>
+                        <li><a href="#">License</a></li>
+                    </ul>
+                </div>
+            </div>
+            <div class="footer-bottom">
+                <p>&copy; 2024 Drug Detection System | Powered by Flask & PyTorch</p>
+            </div>
+        </footer>
+    </div>
+
+    <script src="{{ url_for('static', filename='js/darkmode.js') }}"></script>
+    <script src="{{ url_for('static', filename='js/about.js') }}"></script>
+</body>
+</html>
+

@@ -1,0 +1,298 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Analysis - Drug Detection System</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/analysis.css') }}">
+</head>
+<body>
+    <div class="container">
+        <!-- Header -->
+        <header class="header">
+            <div class="header-content">
+                <div class="logo">
+                    <div class="logo-icon">🧪</div>
+                    <h1>Drug Detection System</h1>
+                </div>
+                <nav class="nav-menu">
+                    <a href="/" class="nav-link">
+                        <span class="nav-icon">🏠</span>
+                        <span class="nav-text">Home</span>
+                    </a>
+                    <a href="/about" class="nav-link">
+                        <span class="nav-icon">ℹ️</span>
+                        <span class="nav-text">About</span>
+                    </a>
+                    <a href="/analysis" class="nav-link active">
+                        <span class="nav-icon">📊</span>
+                        <span class="nav-text">Analysis</span>
+                    </a>
+                    <a href="/drugs" class="nav-link">
+                        <span class="nav-icon">💊</span>
+                        <span class="nav-text">Drugs</span>
+                    </a>
+                    <a href="/login" class="nav-link nav-logout" onclick="logoutFunc(); return false;">
+                        <span class="nav-icon">🚪</span>
+                        <span class="nav-text">Logout</span>
+                    </a>
+                    <button id="darkModeToggle" class="nav-link" style="border: none; background: none; cursor: pointer; padding: 0.75rem 1.25rem;" title="Toggle Dark Mode">🌙</button>
+                </nav>
+                <div class="header-status">
+                    <div id="statusIndicator" class="status-dot"></div>
+                    <span id="statusText">Active</span>
+                </div>
+            </div>
+        </header>
+
+        <!-- Main Content -->
+        <main class="analysis-main">
+            <!-- Hero Section -->
+            <section class="analysis-hero">
+                <div class="hero-content">
+                    <h1>Drug-Drug Interaction Analysis</h1>
+                    <p>Model performance metrics for binary classification of drug interactions</p>
+                </div>
+            </section>
+
+            <!-- Metrics Overview -->
+            <section class="metrics-overview">
+                <div class="overview-grid">
+                    <div class="metric-card">
+                        <div class="metric-icon">📈</div>
+                        <h3>Validation Accuracy</h3>
+                        <p class="metric-value">97.45%</p>
+                        <p class="metric-label">Drug Interaction Detection</p>
+                    </div>
+                    <div class="metric-card">
+                        <div class="metric-icon">✅</div>
+                        <h3>Training Epochs</h3>
+                        <p class="metric-value">10</p>
+                        <p class="metric-label">Completed Successfully</p>
+                    </div>
+                    <div class="metric-card">
+                        <div class="metric-icon">🎯</div>
+                        <h3>Input Features</h3>
+                        <p class="metric-value">2097</p>
+                        <p class="metric-label">Vector Size (Combined)</p>
+                    </div>
+                    <div class="metric-card">
+                        <div class="metric-icon">⚖️</div>
+                        <h3>Output Classes</h3>
+                        <p class="metric-value">2</p>
+                        <p class="metric-label">Safe / Harmful</p>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Charts Section -->
+            <section class="charts-section">
+                <div class="charts-container">
+                    <!-- Row 1: Loss and Accuracy -->
+                    <div class="chart-row">
+                        <div class="chart-card">
+                            <h3>Training & Validation Loss</h3>
+                            <div class="chart-placeholder">
+                                <img src="{{ url_for('static', filename='images/training_validation_loss.png') }}" alt="Training & Validation Loss">
+                            </div>
+                        </div>
+                        <div class="chart-card">
+                            <h3>Training vs Validation Accuracy</h3>
+                            <div class="chart-placeholder">
+                                <img src="{{ url_for('static', filename='images/training_vs_validation_accuracy.png') }}" alt="Training vs Validation Accuracy">
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Row 2: Class Distributions -->
+                    <div class="chart-row">
+                        <div class="chart-card">
+                            <h3>Training Set Class Distribution</h3>
+                            <div class="chart-placeholder">
+                                <img src="{{ url_for('static', filename='images/validation_class_distribution.png') }}" alt="Training Class Distribution">
+                            </div>
+                        </div>
+                        <div class="chart-card">
+                            <h3>Validation Set Class Distribution</h3>
+                            <div class="chart-placeholder">
+                                <img src="{{ url_for('static', filename='images/confusion_matrix.png') }}" alt="Validation Class Distribution">
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Row 3: Train vs Validation and Confusion Matrix -->
+                    <div class="chart-row">
+                        <div class="chart-card">
+                            <h3>Class Distribution (Train vs Validation)</h3>
+                            <div class="chart-placeholder">
+                                <img src="{{ url_for('static', filename='images/class_distribution_comparison.png') }}" alt="Class Distribution Comparison">
+                            </div>
+                        </div>
+                        <div class="chart-card">
+                            <h3>Confusion Matrix</h3>
+                            <div class="chart-placeholder">
+                                <img src="{{ url_for('static', filename='images/training_class_distribution.png') }}" alt="Confusion Matrix">
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Detailed Insights -->
+            <section class="insights-section">
+                <h2>Performance Insights</h2>
+                <div class="insights-grid">
+                    <div class="insight-card">
+                        <div class="insight-icon">🔍</div>
+                        <h4>Interaction Detection</h4>
+                        <p>Model successfully identifies drug-drug interactions with 97.45% accuracy. Molecular fingerprint analysis enables reliable prediction of potential pharmaceutical interactions before clinical use.</p>
+                    </div>
+                    <div class="insight-card">
+                        <div class="insight-icon">📊</div>
+                        <h4>Safe vs Harmful</h4>
+                        <p>Binary classification distinguishes safe drug combinations (Class 0) from harmful interactions (Class 1). Strong prediction confidence helps pharmaceutical professionals make informed decisions on drug combinations.</p>
+                    </div>
+                    <div class="insight-card">
+                        <div class="insight-icon">⚖️</div>
+                        <h4>Feature Analysis</h4>
+                        <p>Model processes 2097-dimensional feature vectors representing combined molecular properties of drug pairs. These high-dimensional representations capture complex chemical interactions and structural relationships.</p>
+                    </div>
+                    <div class="insight-card">
+                        <div class="insight-icon">✓</div>
+                        <h4>Clinical Reliability</h4>
+                        <p>Excellent confusion matrix performance demonstrates reliable classification of drug interactions. Low false positive/negative rates indicate the model can be trusted for pharmaceutical safety assessments.</p>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Statistics Table -->
+            <section class="statistics-section">
+                <h2>Training Statistics</h2>
+                <div class="stats-table-container">
+                    <table class="stats-table">
+                        <thead>
+                            <tr>
+                                <th>Epoch</th>
+                                <th>Training Loss</th>
+                                <th>Validation Loss</th>
+                                <th>Validation Accuracy</th>
+                                <th>Status</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td>1</td>
+                                <td>0.0810</td>
+                                <td>0.0890</td>
+                                <td>97.20%</td>
+                                <td><span class="status-badge">Training</span></td>
+                            </tr>
+                            <tr>
+                                <td>2</td>
+                                <td>0.0755</td>
+                                <td>0.0875</td>
+                                <td>97.20%</td>
+                                <td><span class="status-badge">Training</span></td>
+                            </tr>
+                            <tr>
+                                <td>3</td>
+                                <td>0.0710</td>
+                                <td>0.0880</td>
+                                <td>97.23%</td>
+                                <td><span class="status-badge">Training</span></td>
+                            </tr>
+                            <tr>
+                                <td>4</td>
+                                <td>0.0680</td>
+                                <td>0.0875</td>
+                                <td>97.30%</td>
+                                <td><span class="status-badge">Training</span></td>
+                            </tr>
+                            <tr>
+                                <td>5</td>
+                                <td>0.0650</td>
+                                <td>0.0870</td>
+                                <td>97.35%</td>
+                                <td><span class="status-badge">Training</span></td>
+                            </tr>
+                            <tr>
+                                <td>6</td>
+                                <td>0.0665</td>
+                                <td>0.0870</td>
+                                <td>97.37%</td>
+                                <td><span class="status-badge">Optimizing</span></td>
+                            </tr>
+                            <tr>
+                                <td>7</td>
+                                <td>0.0640</td>
+                                <td>0.0865</td>
+                                <td>97.40%</td>
+                                <td><span class="status-badge">Optimizing</span></td>
+                            </tr>
+                            <tr>
+                                <td>8</td>
+                                <td>0.0655</td>
+                                <td>0.0868</td>
+                                <td>97.38%</td>
+                                <td><span class="status-badge">Stable</span></td>
+                            </tr>
+                            <tr>
+                                <td>9</td>
+                                <td>0.0645</td>
+                                <td>0.0870</td>
+                                <td>97.40%</td>
+                                <td><span class="status-badge">Stable</span></td>
+                            </tr>
+                            <tr class="highlight-row">
+                                <td>10</td>
+                                <td>0.0630</td>
+                                <td>0.0885</td>
+                                <td>97.45%</td>
+                                <td><span class="status-badge status-complete">Complete</span></td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </section>
+
+            <!-- Model Summary -->
+            <section class="model-summary">
+                <h2>Model Summary</h2>
+                <div class="summary-content">
+                    <div class="summary-item">
+                        <h4>Task Description</h4>
+                        <p>Binary classification model designed to detect potential drug-drug interactions. Analyzes molecular fingerprint vectors from drug pairs to predict interaction risk.</p>
+                    </div>
+                    <div class="summary-item">
+                        <h4>Model Architecture</h4>
+                        <p><strong>Framework:</strong> PyTorch | <strong>Type:</strong> Deep Neural Network | <strong>Input Size:</strong> 2097 features | <strong>Output:</strong> 2 classes | <strong>Activation:</strong> ReLU + Softmax</p>
+                    </div>
+                    <div class="summary-item">
+                        <h4>Classification Classes</h4>
+                        <p><strong>Class 0:</strong> Safe - No drug interaction detected | <strong>Class 1:</strong> Harmful - Drug interaction risk identified</p>
+                    </div>
+                    <div class="summary-item">
+                        <h4>Input Format</h4>
+                        <p><strong>Drug Pairs:</strong> Two molecular fingerprint vectors | <strong>Vector Size:</strong> 2048 per drug | <strong>Combined:</strong> Concatenated to 4096, padded/trimmed to 2097 features</p>
+                    </div>
+                </div>
+            </section>
+        </main>
+    </div>
+
+    <!-- Scripts -->
+    <script src="{{ url_for('static', filename='js/darkmode.js') }}"></script>
+    <script>
+        // Logout function (basic implementation)
+        function logoutFunc() {
+            fetch('/api/auth/logout', { method: 'POST' })
+                .then(response => response.json())
+                .then(data => {
+                    window.location.href = '/login';
+                })
+                .catch(error => console.error('Logout error:', error));
+        }
+    </script>
+</body>
+</html>
